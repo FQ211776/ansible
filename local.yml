@@ -17,3 +17,4 @@
         - core
   tasks:
     - include_tasks: tasks/ssh.yml
+    - include_tasks: tasks/git-setup.yml
