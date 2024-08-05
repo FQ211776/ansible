@@ -1,6 +1,7 @@
 ---
 - name: Transferir claves GPG
-  hosts: destino
+  hosts: localhost
+  connection: local
   vars:
     gpg_files:
       - gpg-agent.conf
@@ -12,23 +13,16 @@
   tasks:
     - name: Asegurar que existen los directorios de GPG
       file:
-        path: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
+        path: "{{ ansible_env.HOME }}/.gnupg/{{ item | dirname }}"
         state: directory
         mode: '0700'
-      loop:
-        - ""
-        - "openpgp-revocs.d"
-        - "private-keys-v1.d"
-
-    - name: Copiar archivos GPG encriptados
-      copy:
-        src: "{{ playbook_dir }}/{{ item }}"
-        dest: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
-        mode: '0600'
       loop: "{{ gpg_files }}"
 
-    - name: Desencriptar archivos GPG
-      command: ansible-vault decrypt {{ ansible_env.HOME }}/.gnupg/{{ item }}
+    - name: Copiar y desencriptar archivos GPG
+      copy:
+        content: "{{ lookup('ansible.builtin.file', '.gnupg/' + item) | ansible.builtin.vault_decrypt }}"
+        dest: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
+        mode: '0600'
       loop: "{{ gpg_files }}"
 
     - name: Establecer permisos correctos en el directorio .gnupg
