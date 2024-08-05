@@ -1,66 +1,38 @@
 ---
-- name: Configurar GPG
-  hosts: all
+- name: Transferir claves GPG
+  hosts: destino
+  vars:
+    gpg_files:
+      - gpg-agent.conf
+      - openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev
+      - private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key
+      - private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key
+      - trustdb.gpg
+
   tasks:
-    - name: Crear directorio .gnupg
+    - name: Asegurar que existen los directorios de GPG
       file:
-        path: "{{ lookup('env', 'HOME') }}/.gnupg"
+        path: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
         state: directory
         mode: '0700'
+      loop:
+        - ""
+        - "openpgp-revocs.d"
+        - "private-keys-v1.d"
 
-    - name: Copiar gpg-agent.conf
-      template:
-        src: "{{ ansible_env.HOME }}/ansible/.gnupg/gpg-agent.conf"
-        dest: "{{ lookup('env', 'HOME') }}/.gnupg/gpg-agent.conf"
+    - name: Copiar archivos GPG encriptados
+      copy:
+        src: "{{ playbook_dir }}/{{ item }}"
+        dest: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
         mode: '0600'
-      tags:
-        - dotfiles
-        - gpg
+      loop: "{{ gpg_files }}"
 
-    - name: Crear directorio openpgp-revocs.d
+    - name: Desencriptar archivos GPG
+      command: ansible-vault decrypt {{ ansible_env.HOME }}/.gnupg/{{ item }}
+      loop: "{{ gpg_files }}"
+
+    - name: Establecer permisos correctos en el directorio .gnupg
       file:
-        path: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d"
-        state: directory
+        path: "{{ ansible_env.HOME }}/.gnupg"
         mode: '0700'
-
-    - name: Copiar openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev
-      template:
-        src: "{{ ansible_env.HOME }}/ansible/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
-        dest: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
-        mode: '0600'
-      tags:
-        - dotfiles
-        - gpg
-
-    - name: Crear directorio private-keys-v1.d
-      file:
-        path: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d"
-        state: directory
-        mode: '0700'
-
-    - name: Copiar private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key
-      template:
-        src: "{{ ansible_env.HOME }}/ansible/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
-        dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
-        mode: '0600'
-      tags:
-        - dotfiles
-        - gpg
-
-    - name: Copiar private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key
-      template:
-        src: "{{ ansible_env.HOME }}/ansible/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
-        dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
-        mode: '0600'
-      tags:
-        - dotfiles
-        - gpg
-
-    - name: Copiar trustdb.gpg
-      template:
-        src: "{{ ansible_env.HOME }}/ansible/.gnupg/trustdb.gpg"
-        dest: "{{ lookup('env', 'HOME') }}/.gnupg/trustdb.gpg"
-        mode: '0600'
-      tags:
-        - dotfiles
-        - gpg
+        recurse: yes
