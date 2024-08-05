@@ -13,7 +13,7 @@
   tasks:
     - name: Asegurar que existen los directorios de GPG
       file:
-        path: "{{ ansible_env.HOME }}/.gnupg/{{ item | dirname }}"
+        path: "~/ansible/.gnupg/{{ item | dirname }}"
         state: directory
         mode: '0700'
       loop: "{{ gpg_files }}"
