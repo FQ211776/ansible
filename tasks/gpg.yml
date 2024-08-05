@@ -1,5 +1,4 @@
----
-- name: Transferir claves GPG
+- name: GPG
   hosts: localhost
   connection: local
   vars:
