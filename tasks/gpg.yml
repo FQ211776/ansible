@@ -12,6 +12,7 @@
     dest: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
     mode: '0600'
     decrypt: yes
+    remote_src: yes  # Añade esta línea si los archivos están en el host remoto
   loop: "{{ gpg_files }}"
 
 - name: Establecer permisos correctos en el directorio .gnupg
