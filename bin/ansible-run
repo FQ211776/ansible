@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# Detectar la distribución del sistema operativo
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$ID
+else
+    echo "No se pudo detectar la distribución del sistema operativo."
+    exit 1
+fi
+
+# Función para instalar Ansible en Ubuntu
+install_ansible_ubuntu() {
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sudo apt-get update -y
+    sudo apt-get install -y curl git software-properties-common ansible
+}
+
+# Función para instalar Ansible en Arch Linux
+install_ansible_arch() {
+    sudo pacman -Sy --noconfirm curl git base-devel
+    sudo pacman -S --noconfirm ansible
+}
+
+# Verificar si Ansible está instalado y proceder con la instalación si no lo está
+if ! command -v ansible &> /dev/null
+then
+    echo "Ansible no está instalado. Procediendo con la instalación..."
+    case $OS in
+        ubuntu)
+            install_ansible_ubuntu
+            ;;
+        arch)
+            install_ansible_arch
+            ;;
+        *)
+            echo "Distribución no soportada: $OS"
+            exit 1
+            ;;
+    esac
+else
+    echo "Ansible ya está instalado."
+fi
+
+## pull ansible
+sudo ansible-pull -U https://github.com/FQ211776/ansible.git

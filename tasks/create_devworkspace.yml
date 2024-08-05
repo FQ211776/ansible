@@ -1,0 +1,9 @@
+---
+- name: Create DevWorkspace folder
+  hosts: localhost
+  tasks:
+    - name: Ensure DevWorkspace directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/Dropbox/DevWorkspace"
+        state: directory
+        mode: '0755'
