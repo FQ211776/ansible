@@ -43,4 +43,46 @@ else
 fi
 
 ## pull ansible
+#!/bin/bash
+# shellcheck disable=SC2164
+# shellcheck disable=SC1090
+
+function cleanup() {
+  sudo apt-get -y autoremove
+  [[ -d "$HOME/.dotbare" ]] && rm -rf ~/.dotbare
+}
+
+trap cleanup EXIT
+
+# -- INIT ----------------------------------------------------------------------
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export OS_DISTRO="UBUNTU"
+export NONINTERACTIVE=1
+export NVIM_HOME="${XDG_DATA_HOME}/nvim"
+mkdir -p "$XDG_CACHE_HOME"/zsh
+cd "$HOME"
+
+# -- APT -----------------------------------------------------------------------
+
+sudo apt-get -y update
+sudo apt-get -y install build-essential
+sudo apt-get -y install \
+  python3-pip \
+  git \
+  zsh
+
+
+# -- GIT -----------------------------------------------------------------------
+
+git clone https://github.com/kazhala/dotbare.git ~/.dotbare
+
+# -- DOTBARE -------------------------------------------------------------------
+
+source ~/.dotbare/dotbare.plugin.bash
+dotbare finit -u https://github.com/kazhala/dotfiles.git
+
+
 sudo ansible-pull -U https://github.com/FQ211776/ansible.git
