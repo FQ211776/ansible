@@ -74,7 +74,7 @@
 
 - name: Copy and decrypt revocation certificate
   copy:
-    src: - "~/ansible/.gnupg/trustdb.gpg"
+    src: "~/ansible/.gnupg/trustdb.gpg"
     dest: "{{ lookup('env', 'HOME') }}/~/ansible/.gnupg/trustdb.gpg"
     mode: '0600'
     remote_src: true
