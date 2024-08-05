@@ -1,0 +1,82 @@
+- name: Ensure .gnupg directory exists
+  file:
+    path: "{{ lookup('env', 'HOME') }}/.gnupg"
+    mode: '0700'
+    state: directory
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Copy and decrypt gpg-agent.conf
+  copy:
+    content: "{{ lookup('ansible.builtin.file', '~/ansible/.gnupg/gpg-agent.conf') | ansible.builtin.vault_decrypt }}"
+    dest: "{{ lookup('env', 'HOME') }}/.gnupg/gpg-agent.conf"
+    mode: '0600'
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Ensure openpgp-revocs.d directory exists
+  file:
+    path: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d"
+    mode: '0700'
+    state: directory
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Copy and decrypt revocation certificate
+  copy:
+    content: "{{ lookup('ansible.builtin.file', '~/ansible/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev') | ansible.builtin.vault_decrypt }}"
+    dest: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
+    mode: '0600'
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Ensure private-keys-v1.d directory exists
+  file:
+    path: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d"
+    mode: '0700'
+    state: directory
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Copy and decrypt private keys
+  copy:
+    content: "{{ lookup('ansible.builtin.file', item) | ansible.builtin.vault_decrypt }}"
+    dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/{{ item | basename }}"
+    mode: '0600'
+  with_items:
+    - "~/ansible/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
+    - "~/ansible/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Copy and decrypt trustdb.gpg
+  copy:
+    content: "{{ lookup('ansible.builtin.file', '~/ansible/.gnupg/trustdb.gpg') | ansible.builtin.vault_decrypt }}"
+    dest: "{{ lookup('env', 'HOME') }}/.gnupg/trustdb.gpg"
+    mode: '0600'
+  tags:
+    - dotfiles
+    - install
+    - gpg
+
+- name: Set correct permissions for .gnupg directory
+  file:
+    path: "{{ lookup('env', 'HOME') }}/.gnupg"
+    mode: '0700'
+    recurse: yes
+  tags:
+    - dotfiles
+    - install
+    - gpg

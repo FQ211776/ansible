@@ -5,3 +5,4 @@ export LC_ALL=en_US.UTF-8
 
 # Ejecutar el comando de Ansible
 ansible-playbook -i localhost  local.yml -t dotfiles --ask-become-pass --ask-vault-pass
+ansible-playbook -i localhost  local.yml  --ask-become-pass --ask-vault-pass
