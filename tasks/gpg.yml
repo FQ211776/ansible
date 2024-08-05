@@ -1,94 +1,71 @@
-- name: Ensure .gnupg directory exists
-  file:
-    path: "{{ lookup('env', 'HOME') }}/.gnupg"
-    mode: '0700'
-    state: directory
-  tags:
-    - dotfiles
-    - install
-    - gpg
+---
+- name: Configurar GPG
+  hosts: all
+  tasks:
+    - name: Crear directorio .gnupg
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.gnupg"
+        state: directory
+        mode: '0700'
 
-- name: Copy and decrypt gpg-agent.conf
-  copy:
-    src: "~/ansible/.gnupg/gpg-agent.conf"
-    dest: "{{ lookup('env', 'HOME') }}/.gnupg/gpg-agent.conf"
-    mode: '0600'
-    remote_src: true
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Copiar gpg-agent.conf
+      copy:
+        src: "~/ansible/.gnupg/gpg-agent.conf"
+        dest: "{{ lookup('env', 'HOME') }}/.gnupg/gpg-agent.conf"
+        mode: '0600'
+        remote_src: true
+      tags:
+        - dotfiles
+        - gpg
 
-- name: Ensure openpgp-revocs.d directory exists
-  file:
-    path: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d"
-    mode: '0700'
-    state: directory
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Crear directorio openpgp-revocs.d
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d"
+        state: directory
+        mode: '0700'
 
-- name: Copy and decrypt revocation certificate
-  copy:
-    src: "~/ansible/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
-    dest: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
-    mode: '0600'
-    remote_src: true
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Copiar openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev
+      copy:
+        src: "~/ansible/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
+        dest: "{{ lookup('env', 'HOME') }}/.gnupg/openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev"
+        mode: '0600'
+        remote_src: true
+      tags:
+        - dotfiles
+        - gpg
 
-- name: Ensure private-keys-v1.d directory exists
-  file:
-    path: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d"
-    mode: '0700'
-    state: directory
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Crear directorio private-keys-v1.d
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d"
+        state: directory
+        mode: '0700'
 
-- name: Copy and decrypt revocation certificate
-  copy:
-    src: "~/ansible/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
-    dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
-    mode: '0600'
-    remote_src: true
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Copiar private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key
+      copy:
+        src: "~/ansible/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
+        dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key"
+        mode: '0600'
+        remote_src: true
+      tags:
+        - dotfiles
+        - gpg
 
-- name: Copy and decrypt revocation certificate
-  copy:
-    src: "~/ansible/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
-    dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
-    mode: '0600'
-    remote_src: true
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Copiar private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key
+      copy:
+        src: "~/ansible/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
+        dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
+        mode: '0600'
+        remote_src: true
+      tags:
+        - dotfiles
+        - gpg
 
-- name: Copy and decrypt revocation certificate
-  copy:
-    src: "~/ansible/.gnupg/trustdb.gpg"
-    dest: "{{ lookup('env', 'HOME') }}/~/ansible/.gnupg/trustdb.gpg"
-    mode: '0600'
-    remote_src: true
-  tags:
-    - dotfiles
-    - install
-    - gpg
-
-- name: Set correct permissions for .gnupg directory
-  file:
-    path: "{{ lookup('env', 'HOME') }}/.gnupg"
-    mode: '0700'
-    recurse: yes
-  tags:
-    - dotfiles
-    - install
-    - gpg
+    - name: Copiar trustdb.gpg
+      copy:
+        src: "~/ansible/.gnupg/trustdb.gpg"
+        dest: "{{ lookup('env', 'HOME') }}/.gnupg/trustdb.gpg"
+        mode: '0600'
+        remote_src: true
+      tags:
+        - dotfiles
+        - gpg
