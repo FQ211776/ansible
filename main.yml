@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    gpg_files:
+      - gpg-agent.conf
+      - openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev
+      - private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key
+      - private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key
+      - trustdb.gpg
+
+  tasks:
+    - include_tasks: tasks/gpg.yml

@@ -1,31 +1,20 @@
-- name: GPG
-  hosts: localhost
-  connection: local
-  vars:
-    gpg_files:
-      - gpg-agent.conf
-      - openpgp-revocs.d/AAA764CADBF0CCC71CD2C26A12B8F3D3C745F4D2.rev
-      - private-keys-v1.d/790400D11FA62D5395B39ABACB637FA330D5A966.key
-      - private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key
-      - trustdb.gpg
+---
+- name: Asegurar que existen los directorios de GPG
+  file:
+    path: "{{ ansible_env.HOME }}/.gnupg/{{ item | dirname }}"
+    state: directory
+    mode: '0700'
+  loop: "{{ gpg_files }}"
 
-  tasks:
-    - name: Asegurar que existen los directorios de GPG
-      file:
-        path: "~/ansible/.gnupg/{{ item | dirname }}"
-        state: directory
-        mode: '0700'
-      loop: "{{ gpg_files }}"
+- name: Copiar y desencriptar archivos GPG
+  copy:
+    content: "{{ lookup('ansible.builtin.file', ansible_env.HOME + '/ansible/.gnupg/' + item) | ansible.builtin.vault_decrypt }}"
+    dest: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
+    mode: '0600'
+  loop: "{{ gpg_files }}"
 
-    - name: Copiar y desencriptar archivos GPG
-      copy:
-        content: "{{ lookup('ansible.builtin.file', '.gnupg/' + item) | ansible.builtin.vault_decrypt }}"
-        dest: "{{ ansible_env.HOME }}/.gnupg/{{ item }}"
-        mode: '0600'
-      loop: "{{ gpg_files }}"
-
-    - name: Establecer permisos correctos en el directorio .gnupg
-      file:
-        path: "{{ ansible_env.HOME }}/.gnupg"
-        mode: '0700'
-        recurse: yes
+- name: Establecer permisos correctos en el directorio .gnupg
+  file:
+    path: "{{ ansible_env.HOME }}/.gnupg"
+    mode: '0700'
+    recurse: yes
