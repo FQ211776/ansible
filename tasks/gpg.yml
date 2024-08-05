@@ -63,7 +63,7 @@
 
 - name: Copy and decrypt revocation certificate
   copy:
-    src: - "~/ansible/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
+    src: "~/ansible/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
     dest: "{{ lookup('env', 'HOME') }}/.gnupg/private-keys-v1.d/B2489574B63303297D864DE323207F61AE6652E5.key"
     mode: '0600'
     remote_src: true
